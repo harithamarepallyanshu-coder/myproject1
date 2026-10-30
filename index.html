@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            }
+        body {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+      .container {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+      h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+      .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 25px;
+        }
+      .form-group {
+            margin-bottom: 18px;
+        }
+      label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #333;
+        }
+     input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            outline: none;
+        }
+    input:focus, select:focus {
+            border-color: #667eea;
+        }
+      .error {
+            color: red;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+       .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    .checkbox input {
+            width: auto;
+        }
+     button {
+            width: 100%;
+            padding: 13px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+    button:hover {
+            background: #5145cd;
+        }
+    #successMessage {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            text-align: center;
+        }
+    @media(max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+        }
+ </style>
+</head>
+<body>
+<div class="container">
+<h2>Event Registration</h2>
+<p class="subtitle">Register now for our upcoming event!</p>
+<form id="registrationForm">
+<div class="form-group">
+<label for="name">Full Name</label>
+ <input type="text" id="name" placeholder="Enter your name">
+<div class="error" id="nameError"></div>
+</div>
+<div class="form-group">
+<label for="email">Email Address</label>
+<input type="email" id="email" placeholder="Enter your email">
+<div class="error" id="emailError"></div>
+</div>
+<div class="form-group">
+<label for="phone">Phone Number</label>
+<input type="tel" id="phone" placeholder="Enter 10-digit phone number">
+<div class="error" id="phoneError"></div>
+</div>
+<div class="form-group">
+<label for="event">Select Event</label>
+<select id="event">
+                <option value="">-- Select Event --</option>
+                <option value="Web Development Workshop">Web Development Workshop</option>
+                <option value="AI Seminar">AI Seminar</option>
+                <option value="Coding Competition">Coding Competition</option>
+                <option value="Tech Fest">Tech Fest</option>
+            </select>
+            <div class="error" id="eventError"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="date">Event Date</label>
+            <input type="date" id="date">
+            <div class="error" id="dateError"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="participants">Number of Participants</label>
+            <input type="number" id="participants" min="1" max="5" placeholder="Maximum 5">
+            <div class="error" id="participantsError"></div>
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox">
+                <input type="checkbox" id="terms">
+                I agree to the terms and conditions
+            </label>
+            <div class="error" id="termsError"></div>
+        </div>
+
+        <button type="submit">Register Now</button>
+
+        <div id="successMessage">
+            Registration Successful!
+            Thank you for registering.
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+
+    const form = document.getElementById("registrationForm");
+
+    // Set minimum date to today
+    const today = new Date();
+    const localToday = new Date(
+        today.getTime() - today.getTimezoneOffset() * 60000
+    ).toISOString().split("T")[0];
+
+    document.getElementById("date").min = localToday;
+
+    form.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        // Get input values
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const selectedEvent = document.getElementById("event").value;
+        const date = document.getElementById("date").value;
+        const participants = document.getElementById("participants").value;
+        const terms = document.getElementById("terms").checked;
+
+        let isValid = true;
+
+        // Clear previous errors
+        document.querySelectorAll(".error").forEach(function(error) {
+            error.textContent = "";
+        });
+
+        document.getElementById("successMessage").style.display = "none";
+
+        // Name validation
+        if (!/^[\p{L}][\p{L}\s.'-]{1,49}$/u.test(name)) {
+            document.getElementById("nameError").textContent =
+                "Please enter a valid name (2-50 characters).";
+            isValid = false;
+        }
+
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(email)) {
+            document.getElementById("emailError").textContent =
+                "Please enter a valid email address.";
+            isValid = false;
+        }
+
+        // Phone validation
+        if (!/^[6-9]\d{9}$/.test(phone)) {
+            document.getElementById("phoneError").textContent =
+                "Enter a valid 10-digit Indian mobile number.";
+            isValid = false;
+        }
+
+        
+        if (selectedEvent === "") {
+            document.getElementById("eventError").textContent =
+                "Please select an event.";
+            isValid = false;
+        }
+
+        // Date validation
+        if (!date || date < localToday) {
+            document.getElementById("dateError").textContent =
+                "Please select today or a future date.";
+            isValid = false;
+        }
+
+        // Participants validation
+        if (
+            participants === "" ||
+            !Number.isInteger(Number(participants)) ||
+            Number(participants) < 1 ||
+            Number(participants) > 5
+        ) {
+            document.getElementById("participantsError").textContent =
+                "Participants must be between 1 and 5.";
+            isValid = false;
+        }
+
+        // Terms validation
+        if (!terms) {
+            document.getElementById("termsError").textContent =
+                "Please accept the terms and conditions.";
+            isValid = false;
+        }
+
+        // Successful registration
+        if (isValid) {
+
+            document.getElementById("successMessage").style.display = "block";
+
+            alert("Registration completed successfully!");
+
+            form.reset();
+
+            document.getElementById("date").min = localToday;
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
+
